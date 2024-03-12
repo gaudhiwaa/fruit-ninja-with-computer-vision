@@ -2,12 +2,17 @@ import cv2
 import pygame
 import time
 import random
+import pygame.mixer
 import numpy as np
 from hand_detector import HandDetector
 from fruit import Fruit
-from constants import screen_height, screen_width, screen, clock, white, red, blue, black
-import random
+from constants import screen_height, screen_width, screen, clock, white, red, blue, black, backsound_path
+from sound import play_sword_sound
 
+# Initialize pygame mixer
+pygame.mixer.init()
+
+backsound = pygame.mixer.Sound(backsound_path)
 
 def main():
     prev_time = 0
@@ -20,7 +25,7 @@ def main():
     prev_tip_pos = (0, 0)
 
     # Add more fruit images as needed
-    fruit_images = ["apple", "banana", "orange"]
+    fruit_images = ["apple", "banana", "orange", "watermelon", "pineapple"]
 
     # Session settings
     session_duration = 2  # 4 seconds per session
@@ -70,7 +75,7 @@ def main():
         animation_image_path = f"Assets/FruitSliced/{fruit_name}_splash.png"
         animation_images[fruit_name] = pygame.image.load(animation_image_path)
         animation_images[fruit_name] = pygame.transform.scale(
-            animation_images[fruit_name], (80, 80))
+            animation_images[fruit_name], (100, 100))
 
     while True:
         for event in pygame.event.get():
@@ -79,6 +84,7 @@ def main():
                 return
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 show_start_text = False
+                backsound.play()
 
         if show_start_text:
             screen.fill(black)  # Fill the screen with black background
@@ -145,10 +151,10 @@ def main():
                 # screen.fill(black)
 
             # Display fruit coordinates
-            font = pygame.font.Font(None, 24)
-            text = font.render(
-                f"{fruit.rect.x}, {fruit.rect.y}", True, (255, 255, 255))
-            screen.blit(text, (fruit.rect.x, fruit.rect.y - 30))
+            # font = pygame.font.Font(None, 24)
+            # text = font.render(
+            #     f"{fruit.rect.x}, {fruit.rect.y}", True, (255, 255, 255))
+            # screen.blit(text, (fruit.rect.x, fruit.rect.y - 30))
 
         if len(landmarks_list) > 0:
             index_finger_tip_x = landmarks_list[8][1]
@@ -161,16 +167,9 @@ def main():
             cur_tip_pos = (screen_width - index_finger_tip_x,
                            index_finger_tip_y)
 
-            # line_width = abs(index_finger_tip_x - prev_tip_x)
-
-            # adjust threshold as needed
-            
-            # Calculate the width of the polygon
-
-                # if np.linalg.norm(np.array(cur_tip_pos) - np.array(prev_tip_pos)) > 7:
-                # Randomize the offset
             offset = random.choice([3, 5, 7])
-                # Draw a triangle to create sharp edges
+            
+            # Draw a triangle to create sharp edges
             pygame.draw.polygon(screen, white, [
                                     prev_tip_pos, cur_tip_pos, (cur_tip_pos[0] + offset, cur_tip_pos[1] + offset)])
             prev_tip_pos = cur_tip_pos
@@ -182,7 +181,7 @@ def main():
 
         # Display the score
         font = pygame.font.Font(None, 36)
-        score_text = font.render(f"Score: {line_width}", True, white)
+        score_text = font.render(f"Score: {score}", True, white)
         score_rect = score_text.get_rect(topright=(screen_width - 10, 10))
         screen.blit(score_text, score_rect)
 
@@ -212,11 +211,11 @@ def main():
                     # Load half fruit image based on fruit name
                     half_fruit_image_path = f"Assets/HalfFruits/{fruit.name}_half_{random.choice(['1', '2'])}.png"
 
-                    # Load animation image based on fruit name
-                    half_fruit_animation_path = f"Assets/FruitSliced/{fruit.name}_splash.png"
-
                     fruit.image = pygame.image.load(half_fruit_image_path)
                     fruit.image = pygame.transform.scale(fruit.image, (80, 80))
+                    
+                     # Play a random sword sound
+                    play_sword_sound()
 
                     # Start animation effect
                     active_animations[fruit] = time.time()
