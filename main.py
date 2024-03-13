@@ -124,8 +124,8 @@ def main():
         # Update and draw active fruits
         for fruit in active_fruits:
             fruit.update()
-            if fruit.rect.y > 479:
-                active_fruits.remove(fruit)
+            # if fruit.rect.y > 479:
+            #     active_fruits.remove(fruit)
 
         # Update the display
         pygame.display.update()
@@ -143,11 +143,12 @@ def main():
             # Check if the fruit is outside the window and hasn't collided
             if not hasattr(fruit, 'collided') and (
                 fruit.rect.x == 0 or
-                fruit.rect.x == screen_width or
+                fruit.rect.x > screen_width or
                 fruit.rect.y == 0 or
-                fruit.rect.y == screen_height
+                fruit.rect.y > screen_height
             ):
                 fruits_not_colliding += 1  # Increment the counter for non-colliding fruits
+                active_fruits.remove(fruit)
                 # screen.fill(black)
 
             # Display fruit coordinates
