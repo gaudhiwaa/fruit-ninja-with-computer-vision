@@ -14,7 +14,7 @@ class Fruit:
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, screen_width - self.rect.width)
         self.rect.y = screen_height  # Start the fruit at the bottom of the screen
-        self.speed = 12  # Adjust the speed value as needed
+        self.speed = 13  # Adjust the speed value as needed
         self.name = self.image_path.split('/')[-1].split('.')[0]  # Extract fruit name
         self.crossed_center = False  # New flag to track if the fruit crossed the center
         self.velocity = random.uniform(-1, -3)  # Initial negative velocity
@@ -53,3 +53,20 @@ class Fruit:
         rotated_image = pygame.transform.rotate(self.image, self.rotation_angle)
         new_rect = rotated_image.get_rect(center=self.rect.center)
         surface.blit(rotated_image, new_rect)
+
+class CenteredFruit:
+    def __init__(self):
+        # Load fruit images from the "Assets/Fruits" folder
+        fruit_images = ["Assets/Fruits/apple.png", "Assets/Fruits/banana.png", "Assets/Fruits/orange.png", "Assets/Fruits/pineapple.png", "Assets/Fruits/watermelon.png"]  # Add more fruit images as needed
+        self.image_path = random.choice(fruit_images)
+        self.name = self.image_path.split('/')[-1].split('.')[0]  # Extract fruit name
+        self.image = pygame.image.load(self.image_path)
+        self.image = pygame.transform.scale(self.image, (100, 100))
+        self.rect = self.image.get_rect()
+        self.rect.center = (screen_width // 2, screen_height // 2)  # Place the fruit in the center of the screen
+
+    def update(self):
+        pass  # No need for update logic in this case
+
+    def draw(self, surface):
+        surface.blit(self.image, self.rect)
