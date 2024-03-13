@@ -14,7 +14,7 @@ class Fruit:
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, screen_width - self.rect.width)
         self.rect.y = screen_height  # Start the fruit at the bottom of the screen
-        self.speed = 13  # Adjust the speed value as needed
+        self.speed = 12  # Adjust the speed value as needed
         self.name = self.image_path.split('/')[-1].split('.')[0]  # Extract fruit name
         self.crossed_center = False  # New flag to track if the fruit crossed the center
         self.velocity = random.uniform(-1, -3)  # Initial negative velocity
@@ -23,9 +23,9 @@ class Fruit:
         
         # Adjust the angle based on initial position
         if self.rect.x <= screen_width // 2:
-            self.angle = random.choice([40, 50])  # Positive angles for left side
+            self.angle = random.choice([90, 80])  # Positive angles for left side
         else:
-            self.angle = random.choice([130, 140])  # Negative angles for right side
+            self.angle = random.choice([110, 90])  # Negative angles for right side
 
     def update(self):
         self.rotation_angle = (self.rotation_angle + 2) % 360
@@ -44,10 +44,10 @@ class Fruit:
         else:
             self.rect.y -= self.speed
 
-        if self.rect.y < 0 or self.rect.y > screen_height:
-            self.rect.x = random.randint(0, screen_width - self.rect.width)
-            self.rect.y = screen_height
-            self.velocity = random.uniform(-1, -3)
+        # if self.rect.y < 0 or self.rect.y > screen_height:
+        #     self.rect.x = random.randint(0, screen_width - self.rect.width)
+        #     self.rect.y = screen_height
+        #     self.velocity = random.uniform(-1, -3)
 
     def draw(self, surface):
         rotated_image = pygame.transform.rotate(self.image, self.rotation_angle)

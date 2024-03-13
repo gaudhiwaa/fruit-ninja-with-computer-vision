@@ -20,9 +20,12 @@ def main():
     handDetector = HandDetector()
     cap = cv2.VideoCapture(0)
     score = 0
+    cur_tip_pos = (0, 0)
     line_width = 0
     prev_tip_x = 0
     prev_tip_pos = (0, 0)
+
+    sum_fruits = 0
 
     # Add more fruit images as needed
     fruit_images = ["apple", "banana", "orange", "watermelon", "pineapple"]
@@ -78,6 +81,18 @@ def main():
             animation_images[fruit_name], (100, 100))
 
     while True:
+        # # Draw the rectangle on the screen y
+        # pygame.draw.rect(screen, (255, 0, 0) , (0, screen_height//2, 1, screen_height) )
+
+        # # Draw the rectangle on the screen
+        # pygame.draw.rect(screen, (255, 0, 0) , (screen_width-1, screen_height//2, 1, screen_height) )
+
+        # Draw the rectangle on the screen
+        # pygame.draw.rect(screen, (255, 0, 0) , (10, 100, 1, screen_height) )
+
+        # Update the display
+        pygame.display.flip()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -119,6 +134,7 @@ def main():
         if elapsed_time < session_duration and fruits_dropped < max_fruits_per_session:
             if random.randint(0, 100) < 5:  # Adjust the probability
                 active_fruits.append(Fruit())
+                sum_fruits += 1
                 fruits_dropped += 1
 
         # Update and draw active fruits
@@ -142,10 +158,11 @@ def main():
             fruit.draw(screen)
             # Check if the fruit is outside the window and hasn't collided
             if not hasattr(fruit, 'collided') and (
-                fruit.rect.x == 0 or
-                fruit.rect.x > screen_width or
-                fruit.rect.y == 0 or
+                fruit.rect.x < 0 or
+                fruit.rect.x > screen_width - 90 or
+                # or
                 fruit.rect.y > screen_height
+                # fruit.rect.y > screen_height
             ):
                 fruits_not_colliding += 1  # Increment the counter for non-colliding fruits
                 active_fruits.remove(fruit)
