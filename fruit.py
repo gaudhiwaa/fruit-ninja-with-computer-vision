@@ -10,7 +10,7 @@ class Fruit:
         fruit_images = ["Assets/Fruits/apple.png", "Assets/Fruits/banana.png", "Assets/Fruits/orange.png", "Assets/Fruits/pineapple.png", "Assets/Fruits/watermelon.png"]  # Add more fruit images as needed
         self.image_path = random.choice(fruit_images)
         self.image = pygame.image.load(self.image_path)
-        self.image = pygame.transform.scale(self.image, (100, 100))
+        self.image = pygame.transform.scale(self.image, (120, 120))
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, screen_width - self.rect.width)
         self.rect.y = screen_height  # Start the fruit at the bottom of the screen
