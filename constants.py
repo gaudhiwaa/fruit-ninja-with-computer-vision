@@ -24,4 +24,10 @@ sword_sounds_path = [
 ]
 
 # Background sound paths
-backsound_path = "Assets/Backsound/backsound.mp3"
+backsound_start_game_path = "Assets/Backsound/start_game.mp3"
+
+backsound_summon_fruit_path = "Assets/Backsound/summon_fruit.mp3"
+
+backsound_main_menu_path = "Assets/Backsound/main_menu.mp3"
+
+backsound_explosion_path = "Assets/Backsound/explosion.mp3"
