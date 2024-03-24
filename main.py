@@ -170,24 +170,33 @@ def main():
             )
 
             # Draw title and subtitle
-            font_title = pygame.font.Font(None, 45)
+            font_title = pygame.font.Font(None, 60)
             font_subtitle = pygame.font.Font(None, 26)
-            title_text = font_title.render(
-                "Fruit Ninja with Computer Vision", True, white
-            )
+
+            # Split the title into two lines
+            title_line1 = "Fruit Ninja with"
+            title_line2 = "Computer Vision"
+
+            # Render each line separately
+            title_text_line1 = font_title.render(title_line1, True, white)
+            title_text_line2 = font_title.render(title_line2, True, white)
+
+            # Blit the rendered text onto the screen
+            title_rect_line1 = title_text_line1.get_rect(center=(screen_width // 2, screen_height // 2 - 170))
+            title_rect_line2 = title_text_line2.get_rect(center=(screen_width // 2, screen_height // 2 - 130))
+
+            screen.blit(title_text_line1, title_rect_line1)
+            screen.blit(title_text_line2, title_rect_line2)
+
             subtitle_text = font_subtitle.render(
-                "Slice the fruit to start the game", True, white
+                "Slice the fruit to start the game!", True, white
             )
-            title_rect = title_text.get_rect(
-                center=(screen_width // 2, screen_height // 2 - 170)
-            )
+
             subtitle_rect = subtitle_text.get_rect(
-                center=(screen_width // 2, screen_height // 2 - 130)
+                center=(screen_width // 2, screen_height // 2 + 130)
             )
-            screen.blit(title_text, title_rect)
             screen.blit(subtitle_text, subtitle_rect)
 
-            # Update the display
             pygame.display.update()
 
             # Read video frame from the webcam
@@ -456,6 +465,7 @@ def main():
                             fruit.image = pygame.transform.scale(
                                 fruit.image, (220, 220)
                             )
+                            backsound_explosion.set_volume(100.0)
                             backsound_explosion.play()
                             fruits_not_colliding += 1
                             assets = [red_cross_image] * fruits_not_colliding + [
