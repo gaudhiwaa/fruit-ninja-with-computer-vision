@@ -331,7 +331,7 @@ def main():
             # Add new fruit at a random interval within the session
             if (
                 elapsed_time < session_duration
-                and fruits_dropped < random.randint(1, max_fruits_per_session)
+                and fruits_dropped < random.randint(3, max_fruits_per_session)
                 and timer_start_game > 80
             ):
                 if random.randint(0, 100) < 5:  # Adjust the probability
