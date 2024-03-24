@@ -20,6 +20,9 @@ from constants import (
 )
 from sound import play_sword_sound
 
+# Set the title of the window
+pygame.display.set_caption("Fruit Ninja with Computer Vision")
+
 # Initialize pygame mixer
 pygame.mixer.init()
 
@@ -30,7 +33,6 @@ backsound_summon_fruit = pygame.mixer.Sound(backsound_summon_fruit_path)
 backsound_main_menu = pygame.mixer.Sound(backsound_main_menu_path)
 
 backsound_explosion = pygame.mixer.Sound(backsound_explosion_path)
-
 
 def main():
     prev_time = 0
