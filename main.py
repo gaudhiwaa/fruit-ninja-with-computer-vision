@@ -16,7 +16,7 @@ from constants import (
     backsound_start_game_path,
     backsound_summon_fruit_path,
     backsound_main_menu_path,
-    backsound_explosion_path
+    backsound_explosion_path,
 )
 from sound import play_sword_sound
 
@@ -74,20 +74,29 @@ def main():
     # Check is main menu fruit has sliced
     menu_fruit_sliced = False
 
-    # Timer after player sliced the fruit
+    # Timer for delayed start game
     timer_counter = 0
+
+    # Timer for start game
+    timer_start_game = 0
+
+    # Multiplying max_fruit_per_session based on timer
+    i = 0
 
     # Timer after player game over
     game_over_counter = 0
+
+    # Best score
+    best_score = 0
 
     # Add more fruit images as needed
     fruit_images = ["apple", "banana", "orange", "watermelon", "pineapple"]
 
     # Session settings
-    session_duration = 2  # 4 seconds per session
+    session_duration = 4  # Seconds per session
     session_start_time = time.time()
     fruits_dropped = 0
-    max_fruits_per_session = 3  # Maximum 4 fruits per session
+    max_fruits_per_session = 4  # Maximum fruits per session
 
     # List to store active fruits
     active_fruits = []
@@ -127,25 +136,22 @@ def main():
                 fruits_not_colliding = 0
                 timer_counter = 50
                 menu_fruit_sliced = True
+                score = 0
 
         # Timer for fruit in main menu after sliced
         if timer_counter == 50:
             show_menu = False
 
-        # if game_over and game_over_counter == 300:
-        #     game_over_counter = 0
-        #     show_menu = False
-        #     game_over = False
-        #     fruits_not_colliding = 0
-        #     timer_counter = 50
-        #     menu_fruit_sliced = True
-            
-            
         cur_time = time.time()
         fps = 1 / (cur_time - prev_time)
         prev_time = cur_time
         print(f"FPS: {fps:.2f}")
 
+        if timer_start_game == 400 * i and max_fruits_per_session != 5:
+            max_fruits_per_session += 1
+            i += 1
+
+        # Show main menu
         if show_menu:
             fruits_not_colliding = 0
 
@@ -285,7 +291,6 @@ def main():
             and not game_over
             and (len(active_fruits) == 0 or (menu_fruit_sliced and timer_counter == 50))
         ):
-            
             backsound_main_menu.stop()
 
             if not sound_played_start_game:
@@ -303,17 +308,20 @@ def main():
 
             # Read video frame from the webcam
             _, img = cap.read()
-            # img = cv2.flip(img, 1)
 
             # Find hands in the frame and draw landmarks
             img = handDetector.findHands(img)
+
             # Get landmark positions for a specific hand
             landmarks_list = handDetector.findPosition(img)
+
+            timer_start_game += 1
 
             # Add new fruit at a random interval within the session
             if (
                 elapsed_time < session_duration
-                and fruits_dropped < max_fruits_per_session
+                and fruits_dropped < random.randint(1, max_fruits_per_session)
+                and timer_start_game > 80
             ):
                 if random.randint(0, 100) < 5:  # Adjust the probability
                     active_fruits.append(Fruit())
@@ -386,11 +394,6 @@ def main():
                 )
                 prev_tip_pos = cur_tip_pos
 
-            # font = pygame.font.Font(None, 24)
-            # text = font.render(
-            #     f"Not collide: {fruits_not_colliding}", True, (255, 255, 255))
-            # screen.blit(text, (10, 10))
-
             # Check if the maximum number of not collided fruits is reached
             if fruits_not_colliding >= 3:
                 game_over = True
@@ -399,10 +402,16 @@ def main():
             draw_assets()
 
             # Display the score
-            font = pygame.font.Font(None, 36)
-            score_text = font.render(f"Score: {score}", True, white)
+            score_font = pygame.font.Font(None, 80)
+            score_text = score_font.render(f"{score}", True, white)
             score_rect = score_text.get_rect(topright=(screen_width - 10, 10))
             screen.blit(score_text, score_rect)
+
+            # Display the best score
+            best_score_font = pygame.font.Font(None, 32)
+            best_score_text = best_score_font.render(f"Best: {best_score}", True, white)
+            best_score_rect = best_score_text.get_rect(topright=(screen_width - 10, score_rect.bottom + 5))
+            screen.blit(best_score_text, best_score_rect)
 
             # Update the display
             pygame.display.update()
@@ -433,9 +442,11 @@ def main():
                         # Load half fruit image based on fruit name
                         if fruit.name != "bomb":
                             half_fruit_image_path = f"Assets/HalfFruits/{fruit.name}_half_{random.choice(['1', '2'])}.png"
-                            fruit.image = pygame.image.load(f"Assets/FruitSliced/{fruit.name}_splash.png")
+                            fruit.image = pygame.image.load(
+                                f"Assets/FruitSliced/{fruit.name}_splash.png"
+                            )
                             fruit.image = pygame.transform.scale(
-                                fruit.image, (160, 160)
+                                fruit.image, (150, 150)
                             )
                             play_sword_sound()
                             score += 1
@@ -453,28 +464,6 @@ def main():
 
                         # Start animation effect
                         active_animations[fruit] = time.time()
-
-            # # Update active animations
-            # for fruit, animation_start_time in list(active_animations.items()):
-            #     animation_duration = 3  # Adjust duration as needed
-
-            #     if time.time() - animation_start_time < animation_duration:
-            #         # Load animation image and draw it
-            #         animation_image = animation_images.get(fruit.name)
-
-            #         if animation_image:
-            #             screen.blit(animation_image, fruit.rect)
-            #             pygame.display.update()
-            #     else:
-            #         # Animation duration passed, remove from active_animations
-            #         del active_animations[fruit]
-
-            # # Break the loop if 'q' key is pressed
-            # for event in pygame.event.get():
-            #     if event.type == pygame.QUIT:
-            #         pygame.quit()
-            #         return
-
 
         elif game_over:
             # Fill the screen with green color
@@ -500,9 +489,11 @@ def main():
 
             # Display "Game Over" message
             font_spacebar = pygame.font.Font(None, 25)
-            spacebar_text = font_spacebar.render("Press SPACEBAR to try again", True, (255, 255, 255))
+            spacebar_text = font_spacebar.render(
+                "Press SPACEBAR to try again", True, (255, 255, 255)
+            )
             spacebar_rect = spacebar_text.get_rect(
-                center=(screen_width // 2,  total_score_rect.bottom + 30)
+                center=(screen_width // 2, total_score_rect.bottom + 30)
             )
             screen.blit(spacebar_text, spacebar_rect)
 
@@ -522,6 +513,11 @@ def main():
             sound_played_start_game = False
 
             sound_played_main_menu = False
+
+            timer_start_game = 0
+
+            if score > best_score:
+                best_score = score
 
         clock.tick(60)
 
