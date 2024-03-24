@@ -4,17 +4,12 @@ import math
 from constants import screen_height, screen_width
 
 
-class Fruit:
+class Bomb:
     def __init__(self):
-
+        # Load fruit images from the "Assets/Fruits" folder
         fruit_images = [
-            "Assets/Fruits/apple.png",
-            "Assets/Fruits/banana.png",
-            "Assets/Fruits/orange.png",
-            "Assets/Fruits/pineapple.png",
-            "Assets/Fruits/watermelon.png",
-        ]  
-
+            "Assets/Bomb/bomb.png",
+        ]  # Add more fruit images as needed
         self.image_path = random.choice(fruit_images)
         self.image = pygame.image.load(self.image_path)
         self.image = pygame.transform.scale(self.image, (120, 120))
@@ -32,7 +27,7 @@ class Fruit:
         if self.rect.x <= screen_width // 2:
             self.angle = random.choice([90, 87, 89])  # Positive angles for left side
         else:
-            self.angle = random.choice([93, 91, 90])  # Negative angles for right side
+            self.angle = random.choice([94, 90, 91])  # Negative angles for right side
 
     def update(self):
         self.rotation_angle = (self.rotation_angle + 2) % 360
@@ -58,33 +53,5 @@ class Fruit:
 
     def draw(self, surface):
         rotated_image = pygame.transform.rotate(self.image, self.rotation_angle)
-        new_rect = rotated_image.get_rect(center=self.rect.center)
-        surface.blit(rotated_image, new_rect)
-
-
-class CenteredFruit:
-    def __init__(self):
-        # Load fruit images from the "Assets/Fruits" folder
-        fruit_images = [
-            "Assets/Fruits/watermelon.png"
-        ]  # Add more fruit images as needed
-        self.image_path = random.choice(fruit_images)
-        self.name = self.image_path.split("/")[-1].split(".")[0]  # Extract fruit name
-        self.image = pygame.image.load(self.image_path)
-        self.image = pygame.transform.scale(self.image, (100, 100))
-        self.rect = self.image.get_rect()
-        self.rect.center = (
-            screen_width // 2,
-            screen_height // 2,
-        )  # Place the fruit in the center of the screen
-        self.angle = 0  # Initial rotation angle
-
-    def update(self):
-        # Increment the rotation angle
-        self.angle = (self.angle + 0.5) % 360
-
-    def draw(self, surface):
-        # Rotate the image and draw it on the surface
-        rotated_image = pygame.transform.rotate(self.image, self.angle)
         new_rect = rotated_image.get_rect(center=self.rect.center)
         surface.blit(rotated_image, new_rect)
